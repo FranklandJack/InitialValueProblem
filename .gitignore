@@ -1,0 +1,16 @@
+# Git ignore file.
+
+# Stop any pdfs getting uploaded to github, e.g. project specification.
+*.pdf
+
+# Stop the .DS_store file that gets generated on OSX when you look in the folder through finder getting uploaded.
+.DS_store
+
+# Stop any data files getting commited these will generally be the output of runs.
+*.dat
+
+# Stop any txt files getting commited these will general be the output of runs.
+*.txt
+
+# Stop any images getting uploaded.
+*.png

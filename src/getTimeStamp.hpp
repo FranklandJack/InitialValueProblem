@@ -5,8 +5,8 @@
 #include <string>
 #include <chrono>
 #include <sstream>
+#include <algorithm>
 
 std::string getTimeStamp();
 
 #endif /* getTimeStamp */
-

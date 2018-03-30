@@ -10,6 +10,7 @@ std::ostream& operator<<(std::ostream& out, const CahnHilliardInputParameters& p
     out << std::setw(outputColumnWidth) << std::setfill(' ') << std::left << "a: " << std::right << params.aConstant << '\n';
     out << std::setw(outputColumnWidth) << std::setfill(' ') << std::left << "k: " << std::right << params.kConstant << '\n';
     out << std::setw(outputColumnWidth) << std::setfill(' ') << std::left << "Initial-value: " << std::right << params.initialValue << '\n';
+    out << std::setw(outputColumnWidth) << std::setfill(' ') << std::left << "Initial-noise: " << std::right << params.noise << '\n';
     out << std::setw(outputColumnWidth) << std::setfill(' ') << std::left << "Total-steps: " << std::right << params.totalSteps<< '\n';
 	out << std::setw(outputColumnWidth) << std::setfill(' ') << std::left << "Domain-rows: " << std::right << params.rowCount<< '\n';
     out << std::setw(outputColumnWidth) << std::setfill(' ') << std::left << "Domain-cols: " << std::right << params.colCount << '\n';

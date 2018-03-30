@@ -58,9 +58,10 @@
     /**
      *\brief Initializes lattice with some value at each site plus some noise
      *\param initialValue initial value at each lattice site.
+     *\param maximum magnitude of initial noise which will be uniformly distributed. 
      *\param *\param generator reference to random engine to generate random noise.
      */
-    void initialise(double initialValue, std::default_random_engine &generator);
+    void initialise(double initialValue, double noise, std::default_random_engine &generator);
 
     /**
      *\brief Calculates the chemical potential for a given point in the lattice.
@@ -83,6 +84,12 @@
      *\param out ostream reference for data to be streamed to.
      */
     void printFreeEnergy(std::ostream &out) const;
+
+    /**
+     *\brief calculates the extensive free energy on the lattice according to the integral over all sites.
+     *\return floating point representing the extensive free energy.
+     */
+    double freeEnergy() const;
 
     /**
      *\brief Calculates the next value for the order parameter at the (i,j)th lattice site in next step.

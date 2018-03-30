@@ -15,7 +15,7 @@ unset ytics
 #set palette defined (0 "red", 1 "green", 2 "blue")
 
 # This stops an error when all spins are the same.
-#set cbrange[0:2]
+set cbrange[-1:1]
 
 # Do the plot.
 p filename matrix with image

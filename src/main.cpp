@@ -53,6 +53,9 @@ int main(int argc, char const *argv[])
     // \phi_0 initial value of order parameter.
     double initialValue;
 
+    // Maximum magnitude of initial noise.
+    double noise;
+
     // Number of steps to evolve equation for.
     int totalSteps;
 
@@ -75,7 +78,8 @@ int main(int argc, char const *argv[])
         ("a-constant,a", boost::program_options::value<double>(&aConstant)->default_value(0.1),"a parameter from chemical potential.")
         ("k-constant,k", boost::program_options::value<double>(&kConstant)->default_value(0.1),"Kappa parameter from chemical potential.")
         ("initial-value,v", boost::program_options::value<double>(&initialValue)->default_value(0), "Initial value of order parameter.")
-        ("steps,n", boost::program_options::value<int>(&totalSteps)->default_value(10000),"Total number of steps to evolve differential equation for.")
+        ("noise,p",boost::program_options::value<double>(&noise)->default_value(0.1), "Maximum magnitude of initial noise.")
+        ("steps,n", boost::program_options::value<int>(&totalSteps)->default_value(100000),"Total number of steps to evolve differential equation for.")
         ("x-range,r", boost::program_options::value<int>(&xRange)->default_value(100),"Total number of x points in domain of simulation domain.")
         ("y-range,c", boost::program_options::value<int>(&yRange)->default_value(100),"Total number of y points in domain of simulation domain.")
         ("output,o",boost::program_options::value<std::string>(&outputName)->default_value(getTimeStamp()), "Name of output directory to save output files into.")
@@ -103,6 +107,7 @@ int main(int argc, char const *argv[])
         aConstant,
         kConstant,
         initialValue,
+        noise,
         totalSteps, 
         xRange,
         yRange,
@@ -123,8 +128,8 @@ int main(int argc, char const *argv[])
     // Create output file for lattice so we can animate the values.
     std::fstream latticeOutput(outputName+"/lattice.dat",std::ios::out);
 
-    // Create output file for free energy so it can be animated overtime as well.
-    std::fstream freeEnergyOutput(outputName+"/freeEnergy.dat",std::ios::out);
+    // Create an output file for the extensive free energy.
+    std::fstream freeEnergy(outputName+"/freeEnergy.dat",std::ios::out);
 
     // Print input parameters to command line.
     std::cout << inputParameters << '\n';
@@ -138,30 +143,42 @@ int main(int argc, char const *argv[])
 
     // Create the lattice to be used in the simulation, we need two one to hold the current state and one to be updated
     // we can then swap them for performance.
-    CHLattice currentLattice(xRange,yRange,mConstant,aConstant,kConstant,spaceStep);
-    currentLattice.initialise(initialValue,generator);
+    CHLattice currentLattice(xRange,yRange, mConstant, aConstant, kConstant, spaceStep);
+    currentLattice.initialise(initialValue, noise, generator);
     CHLattice updatedLattice = currentLattice;
 
     // Print the initial lattice at t = 0.
     latticeOutput << currentLattice;
-    for(int n = 0; n < totalSteps; ++n)
+
+    // Variable to hold the current time step
+    int t = 0;
+
+    // Print the initial free energy at t = 0.
+    freeEnergy << t << ' ' << updatedLattice.freeEnergy() << '\n';
+    while(t < totalSteps)
     {
         // Update the lattice based on state at current time.
         update(currentLattice, updatedLattice, timeStep);
 
-        if(vm.count("animate"))
+        if(vm.count("animate") && 0== t%1000)
         {
             // Order Parameter.
             // Move to the top of the file.
             latticeOutput.seekg(0,std::ios::beg);
             latticeOutput << updatedLattice << std::flush;
 
-            freeEnergyOutput.seekg(0,std::ios::beg);
-            updatedLattice.printFreeEnergy(freeEnergyOutput);
         }
+        else
+        {
+            // Calculate and print the extensive free energy.
+            freeEnergy << t << ' ' << updatedLattice.freeEnergy() << '\n';
+        }   
         
         // Swap the current lattice and updated lattice so no unnecessary copying takes place.
         std::swap(currentLattice, updatedLattice);
+        
+        // Increment the loop variable.
+        t++;
 
     }
 

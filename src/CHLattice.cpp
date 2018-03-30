@@ -14,9 +14,9 @@ CHLattice::CHLattice(int xRange, int yRange, double m, double a, double k, doubl
 
 }
 
-void CHLattice::initialise(double initialValue, std::default_random_engine &generator)
+void CHLattice::initialise(double initialValue, double noise, std::default_random_engine &generator)
 {
-	static std::uniform_real_distribution<double> distribution(-0.01,0.01);
+	static std::uniform_real_distribution<double> distribution(-noise,noise);
 
 	for(auto &phi : m_data) 
 	{
@@ -41,6 +41,20 @@ double CHLattice::freeEnergy(int i, int j) const
 							+ pow(((*this)(i,j+1)-(*this)(i,j-1))/(2*m_dx),2);
 
 	return (-m_a/2 * pow((*this)(i,j),2) + m_a/4 * pow((*this)(i,j),4) + m_k/2 * gradSquaredTerm);
+}
+
+double CHLattice::freeEnergy() const
+{
+	double sum = 0;
+	for(int j = 0; j < m_yRange; ++j)
+	{
+		for(int i = 0;i < m_xRange;++i)
+		{
+			sum += freeEnergy(i,j);
+		}
+	}
+
+	return sum/(m_xRange*m_yRange);
 }
 
 void CHLattice::printFreeEnergy(std::ostream &out) const

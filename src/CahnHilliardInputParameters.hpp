@@ -32,6 +32,9 @@ public:
     /// \phi_0 initial value of order parameter.
     double initialValue;
 
+    /// Maximum magnitude of initial noise.
+    double noise;
+
     /// Number of steps to evolve equation for.
     int totalSteps;
 

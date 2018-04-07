@@ -18,7 +18,7 @@ void CHLattice::initialise(double initialValue, double noise, std::default_rando
 {
 	static std::uniform_real_distribution<double> distribution(-noise,noise);
 
-	for(auto &phi : m_data) 
+	for(auto &phi : m_data)
 	{
 		phi = initialValue + distribution(generator);
 	}
@@ -27,8 +27,8 @@ void CHLattice::initialise(double initialValue, double noise, std::default_rando
 // The formula for chemical potential is calculated according to (25) in notes.
 double CHLattice::chemicalPotential(int i, int j) const
 {
-	return (- m_a * (*this)(i,j) + m_a * pow((*this)(i,j), 3) 
-			- m_k/(pow(m_dx,2)) * ((*this)(i+1,j)+(*this)(i-1,j) 
+	return (- m_a * (*this)(i,j) + m_a * pow((*this)(i,j), 3)
+			- m_k/(pow(m_dx,2)) * ((*this)(i+1,j)+(*this)(i-1,j)
 				+ (*this)(i,j+1)+(*this)(i,j-1)- 4 * (*this)(i,j)));
 
 
@@ -37,7 +37,7 @@ double CHLattice::chemicalPotential(int i, int j) const
 // Formula for free energy is computed according to (4) in notes.
 double CHLattice::freeEnergy(int i, int j) const
 {
-	double gradSquaredTerm = pow(((*this)(i+1,j)-(*this)(i-1,j))/(2*m_dx),2) 
+	double gradSquaredTerm = pow(((*this)(i+1,j)-(*this)(i-1,j))/(2*m_dx),2)
 							+ pow(((*this)(i,j+1)-(*this)(i,j-1))/(2*m_dx),2);
 
 	return (-m_a/2 * pow((*this)(i,j),2) + m_a/4 * pow((*this)(i,j),4) + m_k/2 * gradSquaredTerm);
@@ -75,7 +75,7 @@ void CHLattice::printFreeEnergy(std::ostream &out) const
 
 double CHLattice::nextValue(int i, int j, double dt) const
 {
-	return ((*this)(i,j) + m_M*dt/(pow(m_dx,2)) * (chemicalPotential(i+1, j)+chemicalPotential(i-1, j)
+	return ((*this)(i,j) + (m_M*dt/(pow(m_dx,2))) * (chemicalPotential(i+1, j)+chemicalPotential(i-1, j)
 		+ chemicalPotential(i, j+1)+ chemicalPotential(i, j-1) - 4 * chemicalPotential(i, j)));
 
 }
@@ -109,7 +109,7 @@ void update(CHLattice &currentLattice, CHLattice &updateLattice, double dt)
  	return out;
 
  }
- 
+
 double& CHLattice::operator()(int x, int y)
 {
 	// Take into account periodic boundary conditions we add extra m_xRange and m_yRange
@@ -131,5 +131,3 @@ const double& CHLattice::operator()(int x, int y) const
 	return m_data[x + y * m_xRange];
 
 }
-
- 
